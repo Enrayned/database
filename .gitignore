@@ -2,3 +2,4 @@ node_modules
 enkas
 src
 package-lock.json
+test*
