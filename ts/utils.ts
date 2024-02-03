@@ -20,9 +20,10 @@ export const getData = (path: string, file: string, type: convertTypes) => {
 export const pathControl = (path: string) => {
   if (!readdirSync(process.cwd()).includes(path)) {
     if (path == ".") return;
-    let dirs = "./";
+    let dirs = "/";
     for (const dir of path.split("/")) {
-      if (!readdirSync(dirs).includes(dir)) mkdirSync(dirs + dir);
+      if (!readdirSync(process.cwd() + dirs).includes(dir))
+        mkdirSync(dirs + dir);
       dirs += dir + "/";
     }
   }
@@ -60,4 +61,41 @@ export const isSameObjects = (val1: any, val2: any) => {
     }
   });
   return isSome;
+};
+
+export const editPath = (path: string): string => {
+  let editedPath: string;
+  editedPath = path.trim();
+  const checkSlash = () => {
+    if (editedPath.startsWith("/")) {
+      editedPath = editedPath.slice(1);
+      checkSlash();
+    }
+    if (editedPath.startsWith("./")) {
+      editedPath = editedPath.slice(2, editedPath.length);
+      checkSlash();
+    }
+    if (editedPath.endsWith("/")) {
+      editedPath = editedPath.slice(0, -1);
+      checkSlash();
+    }
+  };
+  checkSlash();
+  return editedPath;
+};
+export const editFileName = (name: string): string => {
+  let editedFileName: string;
+  editedFileName = name.trim();
+  if (editedFileName.startsWith("./"))
+    editedFileName = editedFileName.slice(2, editedFileName.length);
+  if (editedFileName.endsWith("/"))
+    editedFileName = editedFileName.slice(0, -1);
+  editedFileName = editedFileName.slice(0, editedFileName.lastIndexOf("."));
+  editedFileName.replaceAll("/", "-");
+  return editedFileName;
+};
+
+export const checkType = (type: convertTypes): convertTypes => {
+  if (["yaml", "json", "bson"].includes(type)) return type;
+  else return "json";
 };

@@ -10,13 +10,13 @@
   },
   "author": "senesatka",
   "license": "Apache-2.0",
-  "devDependencies": {
-    "@types/node": "^20.11.16"
-  },
   "dependencies": {
-    "@chocolatemilkdev/emitter": "^1.0.3",
-    "@types/yaml": "^1.9.7",
+    "@chocolatemilkdev/emitter": "^1.0.6",
     "bson-ext": "^4.0.3",
     "yaml": "^2.3.4"
+  },
+  "devDependencies": {
+    "@types/node": "^20.11.16",
+    "@types/yaml": "^1.9.7"
   }
 }
