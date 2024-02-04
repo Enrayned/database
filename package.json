@@ -1,12 +1,12 @@
 {
   "name": "@enrayned/db",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Database package",
   "main": "./src/cjs/index.js",
   "module": "./src/mjs/index.js",
   "types": "./src/typings/index.d.ts",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build": "tsc -p tsconfig.esm.json && tsc -p tsconfig.json"
   },
   "author": "senesatka",
   "license": "Apache-2.0",

@@ -4,3 +4,4 @@ ts
 package-lock.json
 tsconfig.esm.json
 tsconfig.json
+test*

@@ -89,7 +89,8 @@ export const editFileName = (name: string): string => {
     editedFileName = editedFileName.slice(2, editedFileName.length);
   if (editedFileName.endsWith("/"))
     editedFileName = editedFileName.slice(0, -1);
-  editedFileName = editedFileName.slice(0, editedFileName.lastIndexOf("."));
+  if (editedFileName.includes("."))
+    editedFileName = editedFileName.slice(0, editedFileName.lastIndexOf("."));
   editedFileName.replaceAll("/", "-");
   return editedFileName;
 };
