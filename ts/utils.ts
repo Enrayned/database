@@ -20,10 +20,9 @@ export const getData = (path: string, file: string, type: convertTypes) => {
 export const pathControl = (path: string) => {
   if (!readdirSync(process.cwd()).includes(path)) {
     if (path == ".") return;
-    let dirs = "/";
+    let dirs = process.cwd() + "/";
     for (const dir of path.split("/")) {
-      if (!readdirSync(process.cwd() + dirs).includes(dir))
-        mkdirSync(dirs + dir);
+      if (!readdirSync(dirs).includes(dir)) mkdirSync(dirs + dir);
       dirs += dir + "/";
     }
   }

@@ -20,18 +20,18 @@ interface Options {
   type?: convertTypes;
 }
 interface DbInterface {
-  save(): any;
-  setForge(key: string, value: any): any;
-  set(key: string, value: any): any;
-  delete(key: string): any;
-  add(key: string, value: number): any;
-  subtract(key: string, value: number): any;
-  push(key: string, value: any): any;
-  pull(key: string, value: any): any;
+  save(): void;
+  setForge(key: string, value: any): void;
+  set(key: string, value: any): void;
+  delete(key: string): void;
+  add(key: string, value: number): void;
+  subtract(key: string, value: number): void;
+  push(key: string, value: any): void;
+  pull(key: string, value: any): void;
   has(key: string): boolean;
   get(key: string): any;
   all(): object;
-  deleteAll(): object;
+  deleteAll(): void;
 }
 
 export class Db extends Emitter<Events> implements DbInterface {
@@ -51,48 +51,81 @@ export class Db extends Emitter<Events> implements DbInterface {
     utils.pathControl(this.path);
     this.data = utils.getData(this.path, this.file, this.type);
   }
-  save(data?: object) {
+  save(data?: object): void {
     if (typeof data == "object") this.data = data;
     utils.pathControl(this.path);
     utils.save(this.path, this.file, this.data, this.type);
   }
-  setForge(key: string, value: any) {
+  setForge(key: string, value: any): void {
     const { data, oldValue } = methods._setForge(this.data, key, value);
     this.save(data);
     this.emit("set", { key, oldValue, newValue: value });
   }
-  set(key: string, value: any) {
+  set(key: string, value: any): void {
     const { data, oldValue } = methods._set(this.data, key, value);
     this.save(data);
     this.emit("set", { key, oldValue, newValue: value });
   }
-  delete(key: string) {
+  delete(key: string): void {
     const { data, oldValue } = methods._delete(this.data, key);
     this.save(data);
     this.emit("delete", { key, value: oldValue });
   }
-  add(key: string, value: number) {
-    throw new Error("Method not implemented.");
+  add(key: string, value: number): void {
+    if (typeof this.get(key) !== "number")
+      throw TypeError(`${key} is not a number`);
+    else if (typeof this.get(key) === "number") {
+      const { oldValue, data } = methods._set(
+        this.data,
+        key,
+        this.get(key) + value
+      );
+      this.save(data);
+      this.emit("add", { key, oldValue: oldValue, newValue: this.get(key) });
+    }
   }
-  subtract(key: string, value: number) {
-    throw new Error("Method not implemented.");
+  subtract(key: string, value: number): void {
+    if (typeof this.get(key) !== "number")
+      throw TypeError(`${key} is not a number`);
+    else if (typeof this.get(key) === "number") {
+      const { oldValue, data } = methods._set(
+        this.data,
+        key,
+        this.get(key) - value
+      );
+      this.save(data);
+      this.emit("subtract", {
+        key,
+        oldValue: oldValue,
+        newValue: this.get(key),
+      });
+    }
   }
-  push(key: string, value: any) {
-    throw new Error("Method not implemented.");
+  push(key: string, value: any): void {
+    const { array, data } = methods._push(this.data, key, value);
+    this.save(data);
+    this.emit("push", { array, key, pushedData: value });
   }
-  pull(key: string, value: any) {
-    throw new Error("Method not implemented.");
+  pull(key: string, value: any): void {
+    const { array, data } = methods._pull(this.data, key, value);
+    this.save(data);
+    this.emit("pull", { array, key, pulledData: value });
   }
   has(key: string): boolean {
-    throw new Error("Method not implemented.");
+    return methods._has(this.data, key);
   }
-  get(key: string) {
-    throw new Error("Method not implemented.");
-  }
+  get = (key: string): any => methods._get(this.data, key);
+
   all(): object {
-    throw new Error("Method not implemented.");
+    this.loadData();
+    return Object.entries(this.data).map((d) => ({
+      id: d[0],
+      data: d[1],
+    }));
   }
-  deleteAll(): object {
-    throw new Error("Method not implemented.");
+  deleteAll(): void {
+    const { oldData, data } = methods._deleteAll(this.data);
+    this.save(data);
+    this.emit("delete", { key: ".", value: oldData });
   }
 }

@@ -67,7 +67,7 @@ export const _deleteAll = (data: object): { oldData: any; data: object } => ({
   oldData: data,
   data: {},
 });
-export const _has = (_data: object, key: string): boolean => {
+export const _has = (data: object, key: string): boolean => {
   let d: string = "";
   key.split(".").forEach((e) => {
     if (d != "d") d += `["${e}"]`;
@@ -77,7 +77,7 @@ export const _has = (_data: object, key: string): boolean => {
   else if (typeof eval(`data${d}`) !== "undefined") return true;
   else return false;
 };
-export const _get = (_data: object, key: string): any => {
+export const _get = (data: object, key: string): any => {
   let d: string = "";
   key.split(".").forEach((e) => {
     if (d != "d") d += `["${e}"]`;
